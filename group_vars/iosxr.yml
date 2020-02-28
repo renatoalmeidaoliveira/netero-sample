@@ -1,1 +1,1 @@
-ansible_network_os: ios
+ansible_network_os: iosxr
