@@ -1,0 +1,7 @@
+ansible_network_os: fortimanager
+ansible_connection: httpapi
+ansible_become: no
+ansible_become_method: disable
+ansible_httpapi_use_ssl: true
+ansible_httpapi_validate_certs: false
+ansible_httpapi_timeout: 300

@@ -1,0 +1,19 @@
+commands:
+{% for interface in ASNData.message.interfaces %}
+    - routing bgp peer add remote-address={{ interface.ipaddr4 }} remote-as={{ ASNData.message.ASN }} max-prefix-limit={{ ASNData.message.info_prefixes4 }} in-filter={{ ASNData.message.irr_as_set[0] }}-IN instance=default
+{% endfor %}
+    -  routing filter remove [ find chain ={{ ASNData.message.irr_as_set[0] }}-IN ]
+{% for result in IRRData.results%}
+{% for prefix in result.message.irrPrefix%}
+{%  if prefix.exact == "True" %}
+    - routing filter add chain={{ ASNData.message.irr_as_set[0] }}-IN prefix={{ prefix.prefix }} action=accept
+{% else %}
+{%  if (prefix.greaterEqual is defined) and (prefix.lessEqual is defined) %}
+    - routing filter add chain={{ ASNData.message.irr_as_set[0] }}-IN prefix={{ prefix.prefix }}  prefix-length={{ prefix.greaterEqual }}-{{ prefix.lessEqual }} action=accept
+{% endif %}
+{%  if (prefix.greaterEqual is defined) and (prefix.lessEqual is not defined) %}
+    - routing filter add chain={{ ASNData.message.irr_as_set[0] }}-IN prefix={{ prefix.prefix }}  prefix-length={{ prefix.greaterEqual }} action=accept
+{% endif %}
+{% endif %}
+{% endfor %}
+{% endfor %}

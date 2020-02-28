@@ -1,0 +1,18 @@
+- name: Assert Test
+  collections:
+    - renatoalmeidaoliveira.netero
+
+  hosts: localhost
+
+  tasks:
+
+
+  - name: Prospect ASN Data
+    peeringdb_prospect:
+      src-asn: 1916
+      dst-asn: 1251
+    register: prospectData
+
+  - name: Print Prospect Data
+    debug:
+      var: prospectData

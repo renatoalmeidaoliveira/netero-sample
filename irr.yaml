@@ -1,0 +1,48 @@
+- name: Assert Test
+  collections:
+    - renatoalmeidaoliveira.netero
+
+  hosts: routeros
+ 
+  tasks:
+  
+    - name: Get ASN Data
+      peeringdb_getasn:
+        asn: 204092
+        ix-id: 1670
+      register: ASNData
+    
+    - name: print ASNData
+      debug:
+        var: ASNData
+
+    - name: Get IRR Prefix
+      irr_prefix:
+        asn32Safe: True
+        IPv: 4
+        asSet: "{{ item }} "
+        aggregate: true
+      with_items:
+        - "{{ ASNData.message.irr_as_set }}"
+      register: IRRData
+
+    - name: print IRRData
+      debug:
+        var: IRRData
+    
+    - name: Make Configuration File
+      template:
+        src: MK.j2
+        dest: MKConfig
+        mode: 0777
+      delegate_to: localhost
+    
+    - name: Include configuration File
+      include_vars:
+        file: MKConfig
+      delegate_to: localhost
+
+    - name: Appli Config
+      routeros_command:
+        commands:  "/{{ item }}"
+      with_items: "{{ commands }}"

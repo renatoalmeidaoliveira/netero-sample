@@ -1,0 +1,51 @@
+- name: Setup repositories
+  collections:
+    - renatoalmeidaoliveira.netero
+
+  hosts:  routeros
+
+  tasks:
+
+   - name: Create Repository
+     gogs_createrepo:
+        gogsURL: "http://gogs.local:3000/"
+        organization: "netero"
+        name: "{{ inventory_hostname }}"
+        accessToken: "0bba381ce3df8208591e067a4abae72a556974ce"
+     delegate_to: localhost
+   
+   - name: Clone Repository
+     git:
+        repo: "git@gogs.local:netero/{{ inventory_hostname }}.git"
+        dest: "{{ inventory_hostname }}"
+     delegate_to: localhost
+
+- name: Collect MK configuration
+  collections:
+    - renatoalmeidaoliveira.netero
+  vars:
+    - netero_mode: "backup"
+  hosts: routeros
+  roles:
+    - routeros
+
+- name: Commit and push reporitories
+
+  collections:
+    - renatoalmeidaoliveira.netero
+
+  hosts: routeros
+
+  tasks:
+
+  - name: Commit
+    git_commit:
+      path: "{{ inventory_hostname }}"
+    delegate_to: localhost
+  - name: Push
+    git_push:
+      path: "{{ inventory_hostname }}"
+    delegate_to: localhost
+
+
+

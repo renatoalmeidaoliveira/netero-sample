@@ -1,0 +1,8 @@
+[iosxr]
+XR ansible_host=sbx-iosxr-mgmt.cisco.com ansible_port=8181
+[ios]
+IOS ansible_host=192.168.237.211
+[routeros]
+MK ansible_host=192.168.237.179
+[fortios]
+FG ansible_host=192.168.237.128
